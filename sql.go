@@ -3,9 +3,10 @@ package sql
 import (
 	dbsql "database/sql"
 	"fmt"
+
 	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v4/stdlib"
 	_ "github.com/mattn/go-sqlite3"
 	"go.k6.io/k6/js/modules"
 )
@@ -61,6 +62,9 @@ func (*SQL) Open(database string, connectionString string) (*dbsql.DB, error) {
 		return nil, fmt.Errorf("database %s is not supported", database)
 	}
 
+	if database == "postgres" {
+		database = "pgx"
+	}
 	db, err := dbsql.Open(database, connectionString)
 	if err != nil {
 		return nil, err
